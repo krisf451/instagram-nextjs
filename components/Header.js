@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Image from 'next/image'
 import {
   SearchIcon,
@@ -7,8 +6,6 @@ import {
   HeartIcon,
   PaperAirplaneIcon,
   MenuIcon,
-  XCircleIcon,
-  ChevronDownIcon,
 } from '@heroicons/react/outline'
 import { HomeIcon } from '@heroicons/react/solid'
 import mypic from '../assets/day_ryder.jpeg'
@@ -22,7 +19,7 @@ function classNames(...classes) {
 function Header() {
   return (
     <>
-      <div className="sticky top-0 z-50 border-b bg-white shadow-sm">
+      <div className="sticky top-0 z-50 ml-2 mr-2 border-b bg-white shadow-sm">
         <div className="mx-5 flex max-w-6xl justify-between bg-white lg:mx-auto">
           {/* Left */}
           <div className="relative hidden w-24 cursor-pointer lg:inline-grid">
@@ -55,13 +52,21 @@ function Header() {
           </div>
 
           {/* Right Mobile */}
-          <div className="flex items-center md:hidden">
+          <div className="flex-end flex items-center bg-white md:hidden">
+            <div className="navBtn z-50 h-10 cursor-pointer">
+              <Image
+                src={mypic}
+                alt="profile pic"
+                height={40}
+                width={40}
+                className="rounded-full"
+                objectFit="contain"
+              />
+            </div>
             <Menu as="div" className="relative inline-block text-left">
               <div>
-                <Menu.Button className="inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none ">
-                  <MenuIcon
-                    className={`${!open ? 'hidden' : ''} h-6 w-6 md:hidden`}
-                  />
+                <Menu.Button className="inline-flex w-full justify-center rounded-md bg-white py-2 pl-2 text-sm font-medium text-gray-700 focus:outline-none ">
+                  <MenuIcon className={`h-8 w-8 md:hidden`} />
                 </Menu.Button>
               </div>
 
@@ -76,28 +81,6 @@ function Header() {
               >
                 <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? 'bg-gray-100 text-gray-900'
-                              : 'text-gray-700',
-                            'block px-2.5 py-2 text-sm'
-                          )}
-                        >
-                          <div className="navBtn h-8 w-8 cursor-pointer">
-                            <Image
-                              src={mypic}
-                              alt="profile pic"
-                              className="rounded-full"
-                              objectFit="contain"
-                            />
-                          </div>
-                        </a>
-                      )}
-                    </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
                         <a
