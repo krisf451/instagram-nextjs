@@ -19,7 +19,7 @@ function classNames(...classes) {
 function Header() {
   return (
     <>
-      <div className="sticky top-0 z-50 ml-2 mr-2 border-b bg-white shadow-sm">
+      <div className="sticky top-0 z-50 border-b bg-white pl-2 pr-2 shadow-sm">
         <div className="mx-5 flex max-w-6xl justify-between bg-white lg:mx-auto">
           {/* Left */}
           <div className="relative hidden w-24 cursor-pointer lg:inline-grid">
@@ -53,19 +53,9 @@ function Header() {
 
           {/* Right Mobile */}
           <div className="flex-end flex items-center bg-white md:hidden">
-            <div className="navBtn z-50 h-10 cursor-pointer">
-              <Image
-                src={mypic}
-                alt="profile pic"
-                height={40}
-                width={40}
-                className="rounded-full"
-                objectFit="contain"
-              />
-            </div>
             <Menu as="div" className="relative inline-block text-left">
               <div>
-                <Menu.Button className="inline-flex w-full justify-center rounded-md bg-white py-2 pl-2 text-sm font-medium text-gray-700 focus:outline-none ">
+                <Menu.Button className="inline-flex w-full justify-center rounded-md bg-white py-2 pr-2 text-sm font-medium text-gray-700 focus:outline-none ">
                   <MenuIcon className={`h-8 w-8 md:hidden`} />
                 </Menu.Button>
               </div>
@@ -168,6 +158,16 @@ function Header() {
                 </Menu.Items>
               </Transition>
             </Menu>
+            <div className="navBtn z-50 h-10 cursor-pointer">
+              <Image
+                src={mypic}
+                alt="profile pic"
+                height={40}
+                width={40}
+                className="rounded-full"
+                objectFit="contain"
+              />
+            </div>
           </div>
 
           {/* Right Desktop Menu*/}
