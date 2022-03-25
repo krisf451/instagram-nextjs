@@ -11,12 +11,16 @@ import { HomeIcon } from '@heroicons/react/solid'
 import mypic from '../assets/day_ryder.jpeg'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 function Header() {
+  const { data: session } = useSession()
+  console.log(session)
+
   return (
     <>
       <div className="sticky top-0 z-50 border-b bg-white pl-2 pr-2 shadow-sm">
@@ -158,42 +162,50 @@ function Header() {
                 </Menu.Items>
               </Transition>
             </Menu>
-            <div className="navBtn z-50 h-10 cursor-pointer">
-              <Image
-                src={mypic}
-                alt="profile pic"
-                height={40}
-                width={40}
-                className="rounded-full"
-                objectFit="contain"
-              />
-            </div>
+            {session ? (
+              <div className="navBtn z-50 h-10 cursor-pointer">
+                <Image
+                  src={mypic}
+                  alt="profile pic"
+                  height={40}
+                  width={40}
+                  className="rounded-full"
+                  objectFit="contain"
+                />
+              </div>
+            ) : (
+              <button onClick={signIn}>Sign In</button>
+            )}
           </div>
 
           {/* Right Desktop Menu*/}
           <div className="hidden md:flex md:items-center md:justify-end md:space-x-4">
             <HomeIcon className="navBtn" />
 
-            <div className="navBtn relative">
-              <PaperAirplaneIcon className="navBtn" />
-              <div className="absolute -top-2 -right-0 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                3
-              </div>
-            </div>
+            {session ? (
+              <>
+                <div className="navBtn relative">
+                  <PaperAirplaneIcon className="navBtn" />
+                  <div className="absolute -top-2 -right-0 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                    3
+                  </div>
+                </div>
 
-            <PlusCircleIcon className="navBtn" />
-            <UserGroupIcon className="navBtn" />
-            <HeartIcon className="navBtn" />
-            <div className="navBtn h-10 cursor-pointer">
-              <Image
-                src={mypic}
-                alt="profile pic"
-                height={40}
-                width={40}
-                className="rounded-full"
-                objectFit="contain"
-              />
-            </div>
+                <PlusCircleIcon className="navBtn" />
+                <UserGroupIcon className="navBtn" />
+                <HeartIcon className="navBtn" />
+                <div className="navBtn h-10 cursor-pointer">
+                  <img
+                    alt="profile pic"
+                    className="rounded-full"
+                    src={session.user.image}
+                    onClick={signOut}
+                  />
+                </div>
+              </>
+            ) : (
+              <button onClick={signIn}>Sign In</button>
+            )}
           </div>
         </div>
       </div>
