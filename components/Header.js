@@ -8,10 +8,10 @@ import {
   MenuIcon,
 } from '@heroicons/react/outline'
 import { HomeIcon } from '@heroicons/react/solid'
-import mypic from '../assets/day_ryder.jpeg'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -19,21 +19,27 @@ function classNames(...classes) {
 
 function Header() {
   const { data: session } = useSession()
-  console.log(session)
+  const router = useRouter()
 
   return (
     <>
       <div className="sticky top-0 z-50 border-b bg-white pl-2 pr-2 shadow-sm">
         <div className="mx-5 flex max-w-6xl justify-between bg-white lg:mx-auto">
           {/* Left */}
-          <div className="relative hidden w-24 cursor-pointer lg:inline-grid">
+          <div
+            className="relative hidden w-24 cursor-pointer lg:inline-grid"
+            onClick={() => router.push('/')}
+          >
             <Image
               src="https://links.papareact.com/ocw"
               layout="fill"
               objectFit="contain"
             />
           </div>
-          <div className="relative w-10 flex-shrink-0 cursor-pointer lg:hidden">
+          <div
+            className="relative w-10 flex-shrink-0 cursor-pointer lg:hidden"
+            onClick={() => router.push('/')}
+          >
             <Image
               src="https://links.papareact.com/jjm"
               layout="fill"
@@ -163,14 +169,12 @@ function Header() {
               </Transition>
             </Menu>
             {session ? (
-              <div className="navBtn z-50 h-10 cursor-pointer">
-                <Image
-                  src={mypic}
+              <div className="navBtn h-10 cursor-pointer">
+                <img
                   alt="profile pic"
-                  height={40}
-                  width={40}
                   className="rounded-full"
-                  objectFit="contain"
+                  src={session.user.image}
+                  onClick={signOut}
                 />
               </div>
             ) : (
@@ -180,7 +184,7 @@ function Header() {
 
           {/* Right Desktop Menu*/}
           <div className="hidden md:flex md:items-center md:justify-end md:space-x-4">
-            <HomeIcon className="navBtn" />
+            <HomeIcon className="navBtn" onClick={() => router.push('/')} />
 
             {session ? (
               <>
