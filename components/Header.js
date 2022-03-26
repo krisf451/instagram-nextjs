@@ -172,7 +172,7 @@ function Header() {
               </Transition>
             </Menu>
             {session ? (
-              <div className="navBtn h-10 cursor-pointer">
+              <div className="navBtn h-10 cursor-pointer rounded-full">
                 <img
                   alt="profile pic"
                   className="rounded-full"
