@@ -16,6 +16,9 @@ import {
   orderBy,
   serverTimestamp,
   query,
+  setDoc,
+  doc,
+  deleteDoc,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import Moment from 'react-moment'
@@ -24,6 +27,8 @@ function Post({ id, username, userImg, img, caption }) {
   const { data: session } = useSession()
   const [comments, setComments] = useState([])
   const [comment, setComment] = useState('')
+  const [likes, setLikes] = useState([])
+  const [hasLiked, setHasLiked] = useState(false)
 
   useEffect(
     () =>
@@ -34,8 +39,32 @@ function Post({ id, username, userImg, img, caption }) {
         ),
         (snapshot) => setComments(snapshot.docs)
       ),
-    []
+    [db, id]
   )
+
+  useEffect(
+    () =>
+      onSnapshot(collection(db, 'posts', id, 'likes'), (snapshot) =>
+        setLikes(snapshot.docs)
+      ),
+    [db, id]
+  )
+
+  useEffect(() => {
+    setHasLiked(
+      likes.findIndex((like) => like.id === session?.user?.uid) !== -1
+    )
+  }, [likes])
+
+  const likePost = async () => {
+    if (hasLiked) {
+      await deleteDoc(doc(db, 'posts', id, 'likes', session.user.uid))
+    } else {
+      await setDoc(doc(db, 'posts', id, 'likes', session.user.uid), {
+        username: session.user.username,
+      })
+    }
+  }
 
   const sendComment = async (e) => {
     e.preventDefault()
@@ -68,7 +97,15 @@ function Post({ id, username, userImg, img, caption }) {
       {session && (
         <div className="flex justify-between px-4 pt-4">
           <div className="flex space-x-4">
-            <HeartIcon className="btn" />
+            {hasLiked ? (
+              <HeartIconFilled
+                onClick={likePost}
+                className="btn text-red-500"
+              />
+            ) : (
+              <HeartIcon onClick={likePost} className="btn" />
+            )}
+
             <ChatIcon className="btn" />
             <PaperAirplaneIcon className="btn" />
           </div>
@@ -76,7 +113,11 @@ function Post({ id, username, userImg, img, caption }) {
         </div>
       )}
 
+      {/* caption */}
       <p className="truncate p-5">
+        {likes.length > 0 && (
+          <p className="mb-1 font-bold">{likes.length} likes</p>
+        )}
         <span className="mr-1 font-bold">{username} </span>
         {caption}
       </p>
@@ -88,7 +129,7 @@ function Post({ id, username, userImg, img, caption }) {
           {comments.map((comment) => (
             <div key={comment.id} className="mb-3 flex items-center space-x-2">
               <img
-                src={comment.data().userImage}
+                src={comment.data()?.userImage}
                 alt="comment"
                 className="h-7 rounded-full"
               />
