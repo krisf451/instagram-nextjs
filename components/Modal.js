@@ -1,15 +1,31 @@
 import { useRecoilState } from 'recoil'
 import { modalState } from '../atoms/modalAtom'
 import { Transition, Dialog } from '@headlessui/react'
-import { Fragment } from 'react'
-import { useRef, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { CameraIcon } from '@heroicons/react/outline'
+import { db, storage } from '../firebase'
+import {
+  addDoc,
+  serverTimestamp,
+  collection,
+  updateDoc,
+  doc,
+} from 'firebase/firestore'
+import {
+  ref,
+  getDownloadURL,
+  uploadString,
+  uploadBytes,
+} from 'firebase/storage'
+import { useSession } from 'next-auth/react'
 
 function Modal() {
   const [open, setOpen] = useRecoilState(modalState)
   const [selectedFile, setSelectedFile] = useState(null)
-  const filePickerRef = useRef()
-  const captionRef = useRef()
+  const [loading, setLoading] = useState(false)
+  const filePickerRef = useRef(null)
+  const captionRef = useRef(null)
+  const { data: session } = useSession()
 
   const addImageToPost = (e) => {
     const reader = new FileReader()
@@ -21,6 +37,41 @@ function Modal() {
       setSelectedFile(readerEvent.target.result)
     }
   }
+
+  const uploadPost = async (e) => {
+    e.preventDefault()
+    if (loading) return
+
+    setLoading(true)
+
+    const docRef = await addDoc(collection(db, 'posts'), {
+      username: session.user.username,
+      caption: captionRef.current.value,
+      profileImg: session.user.image,
+      timestamp: serverTimestamp(),
+    })
+
+    console.log('New doc added with ID', docRef.id)
+
+    const imageRef = ref(storage, `posts/${docRef.id}/image`)
+
+    await uploadString(imageRef, selectedFile, 'data_url').then(async () => {
+      const downloadURL = await getDownloadURL(imageRef)
+
+      await updateDoc(
+        doc(db, 'posts', docRef.id),
+        {
+          image: downloadURL,
+        },
+        { merge: true }
+      )
+    })
+
+    setOpen(false)
+    setLoading(false)
+    setSelectedFile(null)
+  }
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -105,10 +156,12 @@ function Modal() {
                 </div>
                 <div className="mt-5 sm:mt-6">
                   <button
+                    disabled={!selectedFile}
+                    onClick={uploadPost}
                     type="button"
                     className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-300 hover:disabled:bg-gray-300 sm:text-sm"
                   >
-                    Upload Post
+                    {loading ? 'Uploading...' : 'Upload Post'}
                   </button>
                 </div>
               </div>
