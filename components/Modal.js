@@ -2,15 +2,24 @@ import { useRecoilState } from 'recoil'
 import { modalState } from '../atoms/modalAtom'
 import { Transition, Dialog } from '@headlessui/react'
 import { Fragment } from 'react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { CameraIcon } from '@heroicons/react/outline'
 
 function Modal() {
   const [open, setOpen] = useRecoilState(modalState)
+  const [selectedFile, setSelectedFile] = useState(null)
   const filePickerRef = useRef()
   const captionRef = useRef()
 
   const addImageToPost = (e) => {
-    e.preventDefault()
+    const reader = new FileReader()
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0])
+    }
+
+    reader.onload = (readerEvent) => {
+      setSelectedFile(readerEvent.target.result)
+    }
   }
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -49,6 +58,25 @@ function Modal() {
           >
             <div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6 sm:align-middle">
               <div>
+                {selectedFile ? (
+                  <img
+                    src={selectedFile}
+                    alt="selected"
+                    onClick={() => setSelectedFile(null)}
+                    className="w-full cursor-pointer object-contain"
+                  />
+                ) : (
+                  <div
+                    onClick={() => filePickerRef.current.click()}
+                    className="mx-auto flex h-12 w-12 transform cursor-pointer items-center justify-center rounded-full bg-red-100 transition-all duration-150 hover:bg-red-200"
+                  >
+                    <CameraIcon
+                      className="h-6 w-6 text-red-600"
+                      aria-hidden="true"
+                    />
+                  </div>
+                )}
+
                 <div>
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title
