@@ -12,6 +12,8 @@ import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { useRecoilState } from 'recoil'
+import { modalState } from '../atoms/modalAtom'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -20,6 +22,7 @@ function classNames(...classes) {
 function Header() {
   const { data: session } = useSession()
   const router = useRouter()
+  const [open, setOpen] = useRecoilState(modalState)
 
   return (
     <>
@@ -116,7 +119,7 @@ function Header() {
                         </a>
                       )}
                     </Menu.Item>
-                    <Menu.Item>
+                    <Menu.Item onClick={() => setOpen(true)}>
                       {({ active }) => (
                         <a
                           href="#"
@@ -195,7 +198,10 @@ function Header() {
                   </div>
                 </div>
 
-                <PlusCircleIcon className="navBtn" />
+                <PlusCircleIcon
+                  className="navBtn"
+                  onClick={() => setOpen(true)}
+                />
                 <UserGroupIcon className="navBtn" />
                 <HeartIcon className="navBtn" />
                 <div className="navBtn h-10 cursor-pointer">
