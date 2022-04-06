@@ -2,7 +2,7 @@ function Story({ img, username }) {
   return (
     <div>
       <img
-        src={img ? img : 'https://links.papareact/oce'}
+        src={img || 'https://links.papareact/oce'}
         alt="story"
         className="h-14 w-14 transform cursor-pointer rounded-full border-2 border-red-500 object-contain p-[1.5px] transition duration-200 ease-out hover:scale-110"
       />
