@@ -1,8 +1,10 @@
+import defaultImage from '../assets/day_ryder.jpeg'
+
 function Story({ img, username }) {
   return (
     <div>
       <img
-        src={img || 'https://links.papareact/oce'}
+        src={img || defaultImage}
         alt="story"
         className="h-14 w-14 transform cursor-pointer rounded-full border-2 border-red-500 object-contain p-[1.5px] transition duration-200 ease-out hover:scale-110"
       />
